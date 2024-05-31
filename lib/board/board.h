@@ -1,10 +1,10 @@
-#ifndef _MICROPHONE_H_
-#define _MICROPHONE_H_
+#ifndef _BOARD_H_
+#define _BOARD_H_
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+    extern void board_init();
 
 #ifdef __cplusplus
 }

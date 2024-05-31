@@ -1,5 +1,5 @@
-#include "led_matrix.h"
 #include <Arduino.h>
+#include "led_matrix.h"
 
 void setup()
 {
