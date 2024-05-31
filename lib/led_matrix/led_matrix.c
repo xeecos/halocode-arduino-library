@@ -225,7 +225,7 @@ static esp_err_t led_matrix_config_t(void)
         memset(led_matrix_structure.led_matrix_rgb_compoment, 0x00, LED_MATRIX_SIZE * 3);
         memset(led_matrix_structure.led_matrix_rgb_compoment_last, 0x00, LED_MATRIX_SIZE * 3);
 
-        led_matrix_structure.module_led_matrix_status = 0;
+        led_matrix_structure.module_led_matrix_status = 1;
 
         return 0;
     }
