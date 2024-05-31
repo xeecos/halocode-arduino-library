@@ -218,7 +218,7 @@ void led_matrix_update_t(void)
  ******************************************************************************/
 static esp_err_t led_matrix_config_t(void)
 {
-    if (led_matrix_structure.module_led_matrix_status != 0)
+    if (led_matrix_structure.module_led_matrix_status != 1)
     {
 
         sled173x_type4_config_t();
