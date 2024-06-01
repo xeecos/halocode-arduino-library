@@ -2,15 +2,12 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "driver/gpio.h"
-#include "driver/i2c.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 
-#include "i2c_master.h"
 #include "sled173x_driver.h"
 #include "led_matrix.h"
 
@@ -18,8 +15,6 @@
  DEFINE MACROS
  ******************************************************************************/
 
-#define I2C_NUM (I2C_NUM_1)
-#define I2C_FREQUENCY (100000)
 #define LED_MATRIX_SIZE (12)
 #define RGB_VALUE_MAX (0xff)
 
@@ -90,19 +85,6 @@ void led_matrix_set_driver_t(int driver_id)
 
 void led_matrix_init_t(void)
 {
-    i2c_master_structure_t i2c_config;
-    i2c_config.i2c_master_port = I2C_NUM_1;
-    i2c_config.i2c_mode = I2C_MODE_MASTER;
-    i2c_config.sda_io_num = 19;
-    i2c_config.sda_pullup_en = GPIO_PULLUP_DISABLE;
-    i2c_config.scl_io_num = 18;
-    i2c_config.scl_pullup_en = GPIO_PULLUP_DISABLE;
-    i2c_config.clk_speed = I2C_FREQUENCY;
-    if (i2c_master_init_t(&i2c_config) == -1)
-    {
-        led_matrix_structure.module_led_matrix_status = 0;
-        return;
-    }
 
     led_matrix_structure.update_mutex = xSemaphoreCreateMutex();
     xSemaphoreGive(led_matrix_structure.update_mutex);
@@ -115,11 +97,11 @@ void led_matrix_init_t(void)
     {
         return;
     }
-    led_matrix_clear_t();
+    led_matrix_clear();
     led_matrix_structure.module_led_matrix_status = 0;
 }
 
-void led_matrix_clear_t(void)
+void led_matrix_clear(void)
 {
     LED_UPDATE_ENTER
     for (uint8_t i = 0; i < LED_MATRIX_SIZE; i++)
@@ -129,7 +111,7 @@ void led_matrix_clear_t(void)
     LED_UPDATE_EXIT
 }
 
-void led_matrix_set_all_led_t(uint8_t red, uint8_t green, uint8_t blue)
+void led_matrix_set_all_led(uint8_t red, uint8_t green, uint8_t blue)
 {
     LED_UPDATE_ENTER
     for (uint8_t i = 0; i < LED_MATRIX_SIZE; i++)
@@ -139,7 +121,7 @@ void led_matrix_set_all_led_t(uint8_t red, uint8_t green, uint8_t blue)
     LED_UPDATE_EXIT
 }
 
-void led_matrix_set_single_led_t(uint8_t led_id, uint8_t red, uint8_t green, uint8_t blue)
+void led_matrix_set_single_led(uint8_t led_id, uint8_t red, uint8_t green, uint8_t blue)
 {
     LED_UPDATE_ENTER
     led_matrix_set_single_led_buffer_t(led_id, red, green, blue);
@@ -181,7 +163,7 @@ void led_matrix_set_all_led_info_t(uint8_t *data, int len)
     LED_UPDATE_EXIT
 }
 
-void led_matrix_set_colorful_led_t(uint8_t *data, int len, int offset)
+void led_matrix_set_colorful_led(uint8_t *data, int len, int offset)
 {
     LED_UPDATE_ENTER
     len = (len > LED_MATRIX_SIZE * 3) ? LED_MATRIX_SIZE * 3 : len;
@@ -202,7 +184,7 @@ void led_matrix_set_colorful_led_t(uint8_t *data, int len, int offset)
     LED_UPDATE_EXIT
 }
 
-void led_matrix_update_t(void)
+void led_matrix_update(void)
 {
     if (is_led_rgb_components_update_t())
     {
