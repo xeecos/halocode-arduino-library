@@ -4,6 +4,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    union
+    {
+        uint8_t byteVal[2];
+        int16_t shortVal;
+    }val2byte;
     extern void board_init();
 
 #ifdef __cplusplus
