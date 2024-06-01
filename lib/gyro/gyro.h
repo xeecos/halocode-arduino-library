@@ -37,7 +37,55 @@ extern "C"
         ANGLE_ID_YAW,
         ANGLE_ID_MAX
     } gyro_angle_id_t;
+    typedef struct
+    {
+        int module_gyro_status;
+        bool gyro_ope_i2c_flag;
+    } gyro_operation_manager_t;
 
+    typedef struct
+    {
+        float gyro_sensitivity;
+        float gyro_x_offs;
+        float gyro_y_offs;
+        float gyro_z_offs;
+    } gyro_calibration_t;
+
+    typedef struct
+    {
+        float acc_x;
+        float acc_y;
+        float acc_z;
+
+        float gyro_x;
+        float gyro_y;
+        float gyro_z;
+
+        float acc_earth;
+
+        bool is_shaked;
+        float shaked_threshold;
+        float shaked_strength;
+
+        float angle_pitch;
+        float angle_yaw;
+        float angle_roll;
+
+        float angle_rotate_x;
+        float angle_rotate_y;
+        float angle_rotate_z;
+
+        uint16_t tilt_status;
+        float acc_filter;
+    } gyro_data_structure_t;
+
+    typedef struct
+    {
+        int16_t threshold_value_high;
+        int16_t threshold_value_low;
+        uint8_t event_occured_flag;
+    } gyro_event_manager_t;
+    
     extern esp_err_t gyro_get_acc_x_t(float *out_val);
     extern esp_err_t gyro_get_acc_y_t(float *out_val);
     extern esp_err_t gyro_get_acc_z_t(float *out_val);
@@ -67,10 +115,10 @@ extern "C"
     extern esp_err_t gyro_deinit_t(void);
     extern esp_err_t gyro_acc_update_t(void);
     extern esp_err_t gyro_calibrate_t(void);
-    extern esp_err_t gyro_update_t(void);
+    extern esp_err_t gyro_update(void);
     extern esp_err_t gyro_test_t(void);
-
-    extern esp_err_t gyro_shake_detect_t(void);
+    extern gyro_data_structure_t gyro_get_data();
+    extern esp_err_t gyro_shake_detect(void);
     extern esp_err_t gyro_event_init_t(void);
 #ifdef __cplusplus
 }

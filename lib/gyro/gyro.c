@@ -74,54 +74,7 @@
 /******************************************************************************
  DEFINE TYPES & CONSTANTS
  ******************************************************************************/
-typedef struct
-{
-    int module_gyro_status;
-    bool gyro_ope_i2c_flag;
-} gyro_operation_manager_t;
 
-typedef struct
-{
-    float gyro_sensitivity;
-    float gyro_x_offs;
-    float gyro_y_offs;
-    float gyro_z_offs;
-} gyro_calibration_t;
-
-typedef struct
-{
-    float acc_x;
-    float acc_y;
-    float acc_z;
-
-    float gyro_x;
-    float gyro_y;
-    float gyro_z;
-
-    float acc_earth;
-
-    bool is_shaked;
-    float shaked_threshold;
-    float shaked_strength;
-
-    float angle_pitch;
-    float angle_yaw;
-    float angle_roll;
-
-    float angle_rotate_x;
-    float angle_rotate_y;
-    float angle_rotate_z;
-
-    uint16_t tilt_status;
-    float acc_filter;
-} gyro_data_structure_t;
-
-typedef struct
-{
-    int16_t threshold_value_high;
-    int16_t threshold_value_low;
-    uint8_t event_occured_flag;
-} gyro_event_manager_t;
 
 /******************************************************************************
  DEFINE PRIVATE DATA
@@ -367,24 +320,13 @@ esp_err_t gyro_get_all_tilt_status_t(uint16_t *out_sta)
     (*out_sta) = ret_status;
     return 0;
 }
-
+gyro_data_structure_t gyro_get_data()
+{
+    return gyro_data_structure;
+}
 /* operation function */
 esp_err_t gyro_init_t(void)
 {
-    i2c_master_structure_t i2c_config;
-    i2c_config.i2c_master_port = I2C_NUM;
-    i2c_config.i2c_mode = I2C_MODE_MASTER;
-    i2c_config.sda_io_num = 19;
-    i2c_config.sda_pullup_en = GPIO_PULLUP_DISABLE;
-    i2c_config.scl_io_num = 18;
-    i2c_config.scl_pullup_en = GPIO_PULLUP_DISABLE;
-    i2c_config.clk_speed = I2C_FREQUENCY;
-
-    if (i2c_master_init_t(&i2c_config) == -1)
-    {
-        gyro_operation_manager.module_gyro_status = 0;
-        return -1;
-    }
 
     if (gyro_config_t() != 0)
     {
@@ -491,7 +433,7 @@ esp_err_t gyro_acc_update_t(void)
 }
 
 /* this function will update the button_structure once */
-esp_err_t gyro_update_t(void)
+esp_err_t gyro_update(void)
 {
     static int32_t update_time_ms = 0;
     static bool first_update_flag = true;
@@ -622,7 +564,7 @@ esp_err_t gyro_update_t(void)
     gyro_data_structure.angle_yaw = s_gz;
 
     /* detect acc event */
-    gyro_shake_detect_t();
+    gyro_shake_detect();
     gyro_event_listening_t(gyro_data_structure.acc_x, gyro_data_structure.acc_y,
                            gyro_data_structure.acc_z);
 
@@ -635,8 +577,8 @@ esp_err_t gyro_test_t(void)
     gyro_event_init_t();
     while (1)
     {
-        gyro_update_t();
-        gyro_shake_detect_t();
+        gyro_update();
+        gyro_shake_detect();
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
     return 0;
@@ -666,7 +608,7 @@ esp_err_t gyro_calibrate_t(void)
     return 0;
 }
 
-esp_err_t gyro_shake_detect_t(void)
+esp_err_t gyro_shake_detect(void)
 {
     static uint16_t acc_filter = 0;
     static bool first_flag = true;
