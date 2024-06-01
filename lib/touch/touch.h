@@ -4,8 +4,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
+extern void touch_init_t();
+extern int touch_status(int key);
 #ifdef __cplusplus
 }
 #endif
